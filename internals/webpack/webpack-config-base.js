@@ -10,6 +10,12 @@ module.exports = (options) => ({
   }, options.output),
   module: {
     loaders: [{
+      test: /bootstrap-sass\/assets\/javascripts\//,
+      loader: 'imports-loader',
+      query: {
+        jQuery: 'jquery'
+      }
+    }, {
       test: /\.js$/,
       loader: 'babel-loader',
       exclude: /node_modules/,
@@ -65,7 +71,7 @@ module.exports = (options) => ({
   ]),
   resolve: {
     modules: ['app', 'node_modules'],
-    extensions: ['', '.js'],
+    extensions: ['', '.js', 'jsx'],
     packageMains: ['jsnext:main', 'main']
   },
   devtool: options.devtool,

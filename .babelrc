@@ -1,6 +1,7 @@
 {
   "presets": [
     "es2015-webpack",
+    "react",
     "stage-0"
   ],
   "env": {

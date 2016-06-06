@@ -1,5 +1,4 @@
-const body = document.body
+import React, {Componet} from 'react'
+import ReactDOM from 'react-dom'
 
-const text = 'world'
-
-body.innerHTML = `hello ${text}`
+ReactDOM.render(<div>Hello World</div>, document.querySelector('#app'))
