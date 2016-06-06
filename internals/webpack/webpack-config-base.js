@@ -16,7 +16,7 @@ module.exports = (options) => ({
         jQuery: 'jquery'
       }
     }, {
-      test: /\.js$/,
+      test: /\.jsx?$/,
       loader: 'babel-loader',
       exclude: /node_modules/,
       query: JSON.parse(fs.readFileSync('./.babelrc'))

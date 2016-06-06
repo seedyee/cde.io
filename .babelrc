@@ -4,9 +4,13 @@
     "react",
     "stage-0"
   ],
+  "plugins": ["transform-runtime"],
   "env": {
     "production": {
       "only": ["app"]
+    },
+    "development": {
+      "presets": ["react-hmre"]
     }
   }
 }
