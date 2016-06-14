@@ -15,6 +15,29 @@ module.exports = require('./webpack-config-base')({
     chunkFilename: '[name].chunk.js'
   },
 
+  cssLoaders: [
+    'style-loader',
+    {
+      loader: 'css-loader',
+      query: {
+        localIdentName: '[path][name]__[local]___[hash:base64:5]',
+        modules: true,
+        importLoaders: 1,
+        sourceMap: true,
+        camelCase: true
+      }
+    },
+    'postcss-loader'
+  ],
+
+  postcssPlugins: [
+    require('postcss-import')({addDependencyTo: webpack}),
+    require('postcss-url')(),
+    require('postcss-cssnext')(),
+    require('postcss-browser-reporter')(),
+    require('postcss-reporter')()
+  ],
+
   // Add hot reloading
   plugins: [
     new webpack.HotModuleReplacementPlugin(), // Tell webpack we want hot reloading
