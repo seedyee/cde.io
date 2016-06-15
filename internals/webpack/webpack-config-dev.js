@@ -20,8 +20,8 @@ module.exports = require('./webpack-config-base')({
     {
       loader: 'css-loader',
       query: {
-        localIdentName: '[path][name]__[local]___[hash:base64:5]',
         modules: true,
+        localIdentName: '[name]__[local]___[hash:base64:5]',
         importLoaders: 1,
         sourceMap: true,
         camelCase: true
