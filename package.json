@@ -7,7 +7,9 @@
   "license": "Apache-2.0",
   "scripts": {
     "start": "NODE_DEV=development node --harmony internals/webpack/webpack-dev-server",
-    "compile:dev": "NODE_ENV=development babel -d dist app"
+    "server": "node --harmony app/server",
+    "compile:dev": "NODE_ENV=development webpack --config internals/webpack/webpack-config-dev.js",
+    "compile:server": "webpack --config internals/webpack/webpack-config-dev-server.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.9.0",
@@ -35,6 +37,7 @@
     "express": "^4.13.4",
     "file-loader": "^0.8.5",
     "html-webpack-plugin": "^2.18.0",
+    "image-webpack-loader": "^1.8.0",
     "imports-loader": "^0.6.5",
     "ip": "^1.1.3",
     "json-loader": "^0.5.4",
@@ -47,10 +50,12 @@
     "postcss-url": "^5.1.2",
     "resolve-url-loader": "^1.4.3",
     "sass-loader": "^3.2.0",
+    "source-map-support": "^0.4.0",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^2.1.0-beta.12",
     "webpack-dev-middleware": "^1.2.1",
-    "webpack-hot-middleware": "^2.10.0"
+    "webpack-hot-middleware": "^2.10.0",
+    "webpack-node-externals": "^1.2.0"
   }
 }

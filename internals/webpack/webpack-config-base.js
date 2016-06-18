@@ -4,10 +4,7 @@ const webpack = require('webpack')
 
 module.exports = (options) => ({
   entry: options.entry,
-  output: Object.assign({
-    path: path.resolve(process.cwd(), 'dist'),
-    publicPath: '/'
-  }, options.output),
+  output: options.output,
   module: {
     loaders: [{
       test: /bootstrap-sass\/assets\/javascripts\//,
@@ -16,10 +13,15 @@ module.exports = (options) => ({
         jQuery: 'jquery'
       }
     }, {
+      test: /\.js$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader',
+      query: JSON.parse(fs.readFileSync('./.babelrc'))
+    }, {
       // Transform our own .css files with PostCSS and CSS-modules
       test: /\.css$/,
       exclude: /node_modules/,
-      loader: options.cssLoaders
+      loaders: options.cssLoaders
     }, {
       // Do not transform vendor's CSS with CSS-modules
       // The point is that they remain in global scope.
@@ -28,44 +30,31 @@ module.exports = (options) => ({
       // So, no need for ExtractTextPlugin here.
       test: /\.css$/,
       include: /node_modules/,
-      loaders: ['style-loader', 'css-loader']
+      loaders: [
+        'style-loader',
+        'css-loader'
+      ]
     }, {
-      test: /\.jsx?$/,
-      loader: 'babel-loader',
-      exclude: /node_modules/,
-      query: JSON.parse(fs.readFileSync('./.babelrc'))
+      test: /\.(jpe?g|png|gif|svg)$/i,
+      loaders: [
+        {
+          loader: 'url-loader',
+          query: {
+            limit: 10000,
+            hash: 'sha512',
+            degist: 'hex',
+            name: '[name]-[hash:7].[ext]'
+          }
+        },
+        'image-webpack'
+      ]
     }, {
-      test: /\.jpe?g$|\.gif$|\.png$|\.svg$/i,
-      loader: 'url-loader',
-      query: {
-        limit: 10000
-      }
-    }, {
-      test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+      test: /\.(eot|ttf|woff|woff2)$/i,
       loader: 'file-loader',
       query: {
-        name: 'fonts/[name].[hash].[ext]',
-        mimetype: 'application/font-woff'
-      }
-    }, {
-      test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-      loader: 'file-loader',
-      query: {
-        name: 'fonts/[name].[hash].[ext]',
-        mimetype: 'application/font-woff'
-      }
-    }, {
-      test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-      loader: 'file-loader',
-      query: {
-        name: 'fonts/[name].[hash].[ext]',
-        mimetype: 'application/octet-stream'
-      }
-    }, {
-      test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-      loader: 'file-loader',
-      query: {
-        name: 'fonts/[name].[hash].[ext]'
+        hash: 'sha512',
+        degist: 'hex',
+        name: 'fonts/[name]-[hash:7].[ext]'
       }
     }, {
       test: /\.json$/,
@@ -83,14 +72,27 @@ module.exports = (options) => ({
       }
     })
   ]),
-  postcss: () => options.postcssPlugins,
+
   resolve: {
     modules: ['app', 'node_modules'],
-    extensions: ['', '.js', 'jsx'],
+    extensions: ['', '.js', 'jsx', '.react.js'],
     packageMains: ['jsnext:main', 'main']
   },
+
   devtool: options.devtool,
-  target: 'web',
+  target: 'web', // Make web variables accessible to webpack, e.g. window
   stats: false, // Don't show stats in the console
-  process: true
+  process: true,
+
+  postcss: () => options.postcssPlugins,
+
+  imageWebpackLoader: {
+    progressive: true,
+    optimizationLevel: 7,
+    bypassOnDebug: false,
+    pngquant:{
+      quality: "65-90",
+      speed: 4
+    }
+  }
 })

@@ -6,11 +6,13 @@ module.exports = require('./webpack-config-base')({
   entry: [
     'webpack-hot-middleware/client',
     'bootstrap-loader',
-    path.join(process.cwd(), 'app/app.js')
+    path.join(__dirname, '..', '..', 'app/index.js')
   ],
 
   // Don't use hashes in dev mode for better performance
   output: {
+    path: path.join(__dirname, '..', '..', 'build', 'app'),
+    publicPath: '/',
     filename: '[name].js',
     chunkFilename: '[name].chunk.js'
   },
@@ -48,10 +50,6 @@ module.exports = require('./webpack-config-base')({
     })
   ],
 
-  babelQuery: {
-    presets: ['react-hmre']
-  },
-
   // Emit a source map for easier debugging
-  devtool: 'inline-source-map'
+  devtool: 'cheap-module-eval-source-map'
 })
