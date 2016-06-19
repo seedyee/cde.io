@@ -78,13 +78,12 @@ module.exports = (options) => ({
 
   resolve: {
     modules: ['app', 'node_modules'],
-    extensions: ['', '.js', 'jsx', '.react.js'],
+    extensions: ['', '.js', '.jsx'],
     packageMains: ['jsnext:main', 'main']
   },
 
   devtool: options.devtool,
   target: 'web', // Make web variables accessible to webpack, e.g. window
-  stats: false, // Don't show stats in the console
   process: true,
 
   postcss: () => options.postcssPlugins,

@@ -8,7 +8,9 @@ const webpackConfig = require('./webpack-config-dev')
 const app = express()
 const compiler = webpack(webpackConfig)
 const middleware = require('webpack-dev-middleware')(compiler, {
-  noInfo: true,
+  stats: {
+    chunks: false
+  },
   publicPath: webpackConfig.output.publicPath,
   headers: {'Access-Control-Allow-Origin': '*'}
 })
