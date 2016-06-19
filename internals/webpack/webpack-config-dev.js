@@ -13,8 +13,8 @@ module.exports = require('./webpack-config-base')({
   output: {
     path: path.join(__dirname, '..', '..', 'build', 'app'),
     publicPath: '/',
-    filename: '[name].js',
-    chunkFilename: '[name].chunk.js'
+    filename: 'bundle.[name].js',
+    chunkFilename: 'bundle.[name].chunk.js'
   },
 
   cssLoaders: [
