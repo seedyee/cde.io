@@ -6,10 +6,11 @@
   "repository": "https://github.com/seedeasy/cde.io",
   "license": "Apache-2.0",
   "scripts": {
+    "build:dev": "NODE_ENV=development webpack --config internals/webpack/webpack-config-dev.js",
+    "build:prod": "NODE_ENV=production webpack --config internals/webpack/webpack-config-prod.js",
     "start": "NODE_DEV=development node --harmony internals/webpack/webpack-dev-server",
-    "server": "node --harmony app/server",
-    "compile:dev": "NODE_ENV=development webpack --config internals/webpack/webpack-config-dev.js",
-    "compile:server": "webpack --config internals/webpack/webpack-config-dev-server.js"
+    "validate:webpack:dev": "webpack-validator internals/webpack/webpack-config-dev.js",
+    "validate:webpack:prod": "webpack-validator internals/webpack/webpack-config-prod.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.9.0",
@@ -35,6 +36,7 @@
     "bootstrap-loader": "^1.0.10",
     "css-loader": "^0.23.1",
     "express": "^4.13.4",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
     "html-webpack-plugin": "^2.18.0",
     "image-webpack-loader": "^1.8.0",
@@ -56,6 +58,7 @@
     "webpack": "^2.1.0-beta.12",
     "webpack-dev-middleware": "^1.2.1",
     "webpack-hot-middleware": "^2.10.0",
-    "webpack-node-externals": "^1.2.0"
+    "webpack-node-externals": "^1.2.0",
+    "webpack-validator": "^2.1.3"
   }
 }

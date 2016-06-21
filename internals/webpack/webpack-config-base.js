@@ -43,7 +43,7 @@ module.exports = (options) => ({
             limit: 10000,
             hash: 'sha512',
             degist: 'hex',
-            name: '[name]-[hash:7].[ext]'
+            name: '[name].[hash:7].[ext]'
           }
         },
         'image-webpack'
@@ -54,7 +54,7 @@ module.exports = (options) => ({
       query: {
         hash: 'sha512',
         degist: 'hex',
-        name: 'fonts/[name]-[hash:7].[ext]'
+        name: 'fonts/[name].[hash:7].[ext]'
       }
     }, {
       test: /\.json$/,
@@ -62,10 +62,6 @@ module.exports = (options) => ({
     }]
   },
   plugins: options.plugins.concat([
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'common',
-      filename: 'bundle.common.js'
-    }),
     // Always expose NODE_ENV to webpack, in order to use `process.env.NODE_ENV`
     // inside your code for any environment checks; UglifyJS will automatically
     // drop any unreachable code
@@ -84,9 +80,14 @@ module.exports = (options) => ({
 
   devtool: options.devtool,
   target: 'web', // Make web variables accessible to webpack, e.g. window
-  process: true,
 
-  postcss: () => options.postcssPlugins,
+  postcss: () => ([
+    require('postcss-import')({addDependencyTo: webpack}),
+    require('postcss-url')(),
+    require('postcss-cssnext')(),
+    require('postcss-browser-reporter')(),
+    require('postcss-reporter')()
+  ]),
 
   imageWebpackLoader: {
     progressive: true,
