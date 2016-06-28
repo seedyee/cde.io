@@ -2,9 +2,14 @@ const fs = require('fs')
 const path = require('path')
 const webpack = require('webpack')
 
-module.exports = (options) => ({
+module.exports = (env) => (options) => ({
+  context: path.resolve(__dirname, '../../app'),
   entry: options.entry,
-  output: options.output,
+
+  output: Object.assign({}, {
+    pathinfo: !env.prod
+  }, options.output),
+
   module: {
     loaders: [{
       test: /bootstrap-sass\/assets\/javascripts\//,
@@ -16,12 +21,29 @@ module.exports = (options) => ({
       test: /\.js$/,
       exclude: /node_modules/,
       loader: 'babel-loader',
-      query: JSON.parse(fs.readFileSync('./.babelrc'))
+
+      query: {
+        // https://github.com/babel/babel-loader#options
+        cacheDirectory: !env.prod,
+        // https://babeljs.io/docs/usage/options/
+        babelrc: false,
+
+        presets: [
+          'es2015-webpack',
+          'react',
+          'stage-0'
+        ].concat(env.prod ? [] : ['react-hmre']),
+
+        plugins: ['transform-runtime'].concat(env.prod ? [
+            'transform-react-remove-prop-types',
+            'transform-react-constant-elements',
+            'transform-react-inline-elements'
+        ] : [])
+      }
     }, {
-      // Transform our own .css files with PostCSS and CSS-modules
       test: /\.css$/,
       exclude: /node_modules/,
-      loaders: options.cssLoaders
+      loaders: options.styleLoaders
     }, {
       // Do not transform vendor's CSS with CSS-modules
       // The point is that they remain in global scope.
@@ -35,66 +57,78 @@ module.exports = (options) => ({
         'css-loader'
       ]
     }, {
-      test: /\.(jpe?g|png|gif|svg)$/i,
+      test: /\.(jpe?g|png|gif)$/i,
       loaders: [
         {
           loader: 'url-loader',
           query: {
             limit: 10000,
-            hash: 'sha512',
-            degist: 'hex',
-            name: '[name].[hash:7].[ext]'
+            name: 'asserts/images/' + (env.prod ? '[name].[hash:7].[ext]' : '[name].[ext]')
           }
         },
         'image-webpack'
       ]
     }, {
-      test: /\.(eot|ttf|woff|woff2)$/i,
+      test: /\.(eot|ttf|woff|woff2|svg)$/i,
       loader: 'file-loader',
       query: {
-        hash: 'sha512',
-        degist: 'hex',
-        name: 'fonts/[name].[hash:7].[ext]'
+        name: 'asserts/fonts/' + (env.prod ? '[name].[hash:7].[ext]' : '[name].[ext]')
       }
     }, {
       test: /\.json$/,
       loader: 'json-loader'
     }]
   },
-  plugins: options.plugins.concat([
-    // Always expose NODE_ENV to webpack, in order to use `process.env.NODE_ENV`
-    // inside your code for any environment checks; UglifyJS will automatically
-    // drop any unreachable code
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-      }
+
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      children: true,
+      minChunks: 2,
+      async: true,
     })
-  ]),
+  ].concat(options.plugins),
 
   resolve: {
+    // A list of directories to resolve modules from
     modules: ['app', 'node_modules'],
-    extensions: ['', '.js', '.jsx'],
-    packageMains: ['jsnext:main', 'main']
+    // A list of extensions which should be tried for files
+    extensions: ['', '.js']
   },
 
+  cache: !env.prod,
+  debug: !env.prod,
   devtool: options.devtool,
-  target: 'web', // Make web variables accessible to webpack, e.g. window
 
-  postcss: () => ([
-    require('postcss-import')({addDependencyTo: webpack}),
+  postcss: (bundler) => ([
+    // Transfer @import rule by inlining content, e.g. @import 'normalize.css'
+    // https://github.com/postcss/postcss-import
+    require('postcss-import')({addDependencyTo: bundler}),
     require('postcss-url')(),
-    require('postcss-cssnext')(),
+    require('postcss-cssnext')({
+      browsers: [
+        'Android 2.3',
+        'Android >= 4',
+        'Chrome >= 35',
+        'Firefox >= 31',
+        'Explorer >= 9',
+        'iOS >= 7',
+        'Opera >= 12',
+        'Safari >= 7.1'
+      ]
+    }),
     require('postcss-browser-reporter')(),
-    require('postcss-reporter')()
+    require('postcss-reporter')({
+      clearMessages: true
+    })
   ]),
 
   imageWebpackLoader: {
     progressive: true,
     optimizationLevel: 7,
     bypassOnDebug: false,
-    pngquant:{
-      quality: "65-90",
+    pngquant: {
+      quality: '65-90',
       speed: 4
     }
   }
