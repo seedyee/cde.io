@@ -5,10 +5,20 @@ const webpack = require('webpack')
 module.exports = (env) => (options) => ({
   context: path.resolve(__dirname, '../../app'),
   entry: options.entry,
+  output: options.output,
+  cache: !env.prod,
+  debug: !env.prod,
+  devtool: options.devtool,
+  target: options.target,
+  externals: options.externals,
+  plugins: options.plugins,
 
-  output: Object.assign({}, {
-    pathinfo: !env.prod
-  }, options.output),
+  resolve: {
+    // A list of directories to resolve modules from
+    modules: ['app', 'node_modules'],
+    // A list of extensions which should be tried for files
+    extensions: ['', '.js']
+  },
 
   module: {
     loaders: [{
@@ -79,26 +89,6 @@ module.exports = (env) => (options) => ({
       loader: 'json-loader'
     }]
   },
-
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      children: true,
-      minChunks: 2,
-      async: true,
-    })
-  ].concat(options.plugins),
-
-  resolve: {
-    // A list of directories to resolve modules from
-    modules: ['app', 'node_modules'],
-    // A list of extensions which should be tried for files
-    extensions: ['', '.js']
-  },
-
-  cache: !env.prod,
-  debug: !env.prod,
-  devtool: options.devtool,
 
   postcss: (bundler) => ([
     // Transfer @import rule by inlining content, e.g. @import 'normalize.css'

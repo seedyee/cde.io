@@ -6,8 +6,8 @@
   "repository": "https://github.com/seedeasy/cde.io",
   "license": "Apache-2.0",
   "scripts": {
-    "build:dev": "webpack --env.dev --config internals/webpack/webpack-config-dev.js",
-    "build:prod": "webpack --env.prod --config internals/webpack/webpack-config-prod.js",
+    "build:client:prod": "webpack --env.prod --config internals/webpack/webpack-config-client.js",
+    "build:server": "webpack --env.prod --config internals/webpack/webpack-config-server.js",
     "start": "NODE_DEV=development node --harmony internals/webpack/webpack-dev-server"
   },
   "dependencies": {

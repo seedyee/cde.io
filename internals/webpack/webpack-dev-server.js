@@ -4,7 +4,7 @@ const webpack = require('webpack')
 
 const logger = require('./logger')
 
-const webpackConfig = require('./webpack-config-dev')({
+const webpackConfig = require('./webpack-config-client')({
   prod: process.env.NODE_ENV === 'production'
 })
 
